@@ -1,4 +1,4 @@
-# Embeddeed Storeroom
+# Embedded Storeroom
 
 A collection of tools for embedded development. The main idea is to have clear what's the current list of useful development tools for embedded systems, since there are many it's difficult to know them all.
 
