@@ -22,7 +22,7 @@ NOTE: If some tool is missing or know how to improve the doc, please contact! Th
 **GHDL**: simulator for VHDL http://ghdl.free.fr/<br>
 
 ## Synthesis tools
-**Xilinx Vivado**: https://www.xilinx.com/products/design-tools/vivado.html
+**Xilinx Vivado**: https://www.xilinx.com/products/design-tools/vivado.html<br>
 **Intel Quartus}**: https://www.intel.la/content/www/xl/es/software/programmable/quartus-prime/overview.html<br>
 
 ## Place and route
