@@ -43,6 +43,9 @@ NOTE: If some tool is missing or know how to improve the doc, please contact! Th
 ## SoC generators
 **LiteX**: Based on migen, lots of interesting cores! https://github.com/enjoy-digital/litex<br>
 
+## Bitstream generation / manipulation
+**altsyncram**: Manipulate quartus MIF files https://tomverbeure.github.io/2021/04/25/Intel-FPGA-RAM-Bitstream-Patching.html
+
 ## Software for embedded devices
 **Micropython**: python for microcontrollers https://micropython.org/<br>
 
