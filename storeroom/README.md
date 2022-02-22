@@ -1,9 +1,9 @@
 # Embedded Storeroom
 
 A collection of tools for embedded development. The main idea is to have clear what's the current list of useful development tools for embedded systems, since there are many it's difficult to know them all.
-The idea is to add links to the tools too, and a brief comment of what they do and how they interact
+The idea is to add links to the tools too, and a brief comment of what they do and how they interact. The tool should be run from the **commandline** or be a plugin of another tool! if we list libraries it would be endless...
 
-NOTE: If some tool is missing or know how to improve the doc, please contact! This was done quick and dirty from what I can recall
+NOTE: If some tool is missing or you know how to improve the doc, please contact! This was done quick and dirty from what I can recall
 
 # SOFTWARE
 
