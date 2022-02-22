@@ -53,8 +53,9 @@ NOTE: If some tool is missing or you know how to improve the doc, please contact
 **OpenOCD**: Debugging and flash tool, interacts with GDB. https://openocd.org/<br>
 **OpenFPGALoader**: for FPGAs https://github.com/trabucayre/openFPGALoader<br>
 
-## Waveform viewers
+## Waveform viewers/editors/generators
 **GTK**: http://gtkwave.sourceforge.net/<br>
+**Wavedron**: Rendering and editor for the web https://wavedrom.com/
 
 ## IDEs (only if supports embedded development)
 **Platform.io**: https://platformio.org/<br>
