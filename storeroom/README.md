@@ -1,7 +1,7 @@
 # Embedded Storeroom
 
 A collection of tools for embedded development. The main idea is to have clear what's the current list of useful development tools for embedded systems, since there are many it's difficult to know them all.
-The idea is to add links to the tools too, and a brief comment of what they do and how they interact. The tool should be run from the **commandline** or be a plugin of another tool! if we list libraries it would be endless...
+The idea is to add links to the tools too, and a brief comment of what they do and how they interact. The tool should be run from the **commandline** or be a plugin of another tool that does! if we list libraries it would be endless...
 
 NOTE: If some tool is missing or you know how to improve the doc, please contact! This was done quick and dirty from what I can recall
 
@@ -20,6 +20,7 @@ NOTE: If some tool is missing or you know how to improve the doc, please contact
 **Verilator**: Verilog simulator https://www.veripool.org/verilator/<br>
 **CXXRTL**: Yosys simulation backend https://github.com/YosysHQ/yosys/tree/master/backends/cxxrtl<br>
 **GHDL**: simulator for VHDL http://ghdl.free.fr/<br>
+**Icarus Verilog**: imulation and synthesis http://iverilog.icarus.com/<br>
 
 ## Synthesis tools
 **Xilinx Vivado**: https://www.xilinx.com/products/design-tools/vivado.html<br>
@@ -33,6 +34,7 @@ NOTE: If some tool is missing or you know how to improve the doc, please contact
 **Verilog**<br>
 **VHDL**<br>
 **Chisel**: https://www.chisel-lang.org/<br>
+**SpinalHDL**: https://github.com/SpinalHDL/SpinalHDL
 **migen**: https://m-labs.hk/gateware/migen/<br>
 **Amaranth**: https://github.com/amaranth-lang/amaranth<br>
 **PipelineC**: C-like HDL with autopipelining https://github.com/JulianKemmerer/PipelineC<br>
@@ -42,6 +44,12 @@ NOTE: If some tool is missing or you know how to improve the doc, please contact
 
 ## SoC generators
 **LiteX**: Based on migen, lots of interesting cores! https://github.com/enjoy-digital/litex<br>
+
+## Formal tools
+**SymbiYosys (sby)**: formal hardware verification https://github.com/YosysHQ/sby<br>
+
+## Testbench
+**mcy**: (Yosys) testing testbenches coverage: https://github.com/YosysHQ/mcy<br>
 
 ## Bitstream generation / manipulation
 **altsyncram**: Manipulate quartus MIF files https://tomverbeure.github.io/2021/04/25/Intel-FPGA-RAM-Bitstream-Patching.html
@@ -58,6 +66,7 @@ NOTE: If some tool is missing or you know how to improve the doc, please contact
 **Wavedron**: Rendering and editor for the web https://wavedrom.com/
 
 ## IDEs (only if supports embedded development)
+**IceStudio:** IDE for FPGA development. Based on IceStorm/Apio https://icestudio.io/<br>
 **Platform.io**: https://platformio.org/<br>
 **Eclipse CDT**: https://www.eclipse.org/cdt/<br>
 
