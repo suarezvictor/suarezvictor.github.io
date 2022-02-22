@@ -5,7 +5,7 @@ The idea is to add links to the tools too, and a brief comment of what they do a
 
 If some tool is missing or know how to improve the doc, please contact!
 
-# Software
+# SOFTWARE
 
 ## Compilers
 CNU GCC: C/C++ compiler<br>
