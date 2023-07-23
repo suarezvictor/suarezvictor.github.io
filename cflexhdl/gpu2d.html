@@ -1,27 +1,115 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-<title>2D graphics accellerator</title>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>gpu2d</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
 </head>
 <body>
-Video of an alpha-blended rectangle rasterizer, implemented in a FPGA using CflexHDL for C to Verilog translation<br>
-<br>
- 
+<h1 id="hardware-accellerated-2d-graphics-server-using-c-to-verilog-tool">Hardware accellerated 2D graphics server using C-to-Verilog tool</h1>
+
 <iframe
  width="720"
  height="576"
- src="https://www.youtube.com/embed/rygcdnJC88A"
- title="CflexHDL alpha-blended rectangle fill accelerator"
+ src="https://www.youtube.com/embed/17c7iFXhycM"
+ title="rectangle/ellipse fill accelerator and clock demo"
  frameborder="0"
  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
  allowfullscreen>
 </iframe>
+<br>
+News: development of the hardware acellerated graphics cores funded by <a href="nlnet.nl">Nlnet Foundation<a><br>
+<h2 id="introduction">Introduction</h2>
+<p>This project aims to provide a graphics server system based on hardware accelerated graphics, and a easy way to develop the graphics primitives. The accelerated versions runs faster using the exact same C code as the software version by automatic translation (<em>transpiling</em>) to Verilog code using a custom tool: <a href="https://github.com/suarezvictor/CflexHDL">https://github.com/suarezvictor/CflexHDL</a>.</p>
+<p>As an example, let’s see how to use and develop drawing privimites for solid rectangles and ellipses.</p>
+<p>Ellipse case:</p>
+<pre><code>MODULE ellipse_fill32(
+  bus_master(bus),
+  const uint16&amp; x0,
+  const uint16&amp; x1,
+  const uint16&amp; y0,
+  const uint16&amp; y1,
+  const uint32&amp; rgba, //color
+  const uint32&amp; base, //pixel offset
+  const int16&amp; xstride, //normally 1, but can run backwards
+  const int16&amp; ystride //bytes to skip for next line (usually the framebuffer width * 4 bytes)
+  )</code></pre>
+<p>The <code>bus</code> argument is automatically handled both in software and in hardware by privided macros.<br />
+The rectangle primitive follows the same function signature.</p>
+<h2 id="software-implementation">Software implementation</h2>
+<p>You can directly call the function using compilation with a normal C compiler:</p>
+<pre><code>ellipse_fill32(BUSMASTER_ARG, x0, x1, y0, y1, rgba, base, xstride, ystride);</code></pre>
+<p>The BUSMASTER_ARG macro is an automatic argument, defined on a provided header file. It’s useful for the implementation of the hardware accelerated primitive, as explained in the next section.</p>
+<p>The following image is produced by the simulator by calling 1000 times to the software implementation of the primitives, using random coordinates:</p>
+<p><img src=simulator1000.png width=640 height=480></img></p>
+<h2 id="hardware-implementation">Hardware implementation</h2>
+<p>To target hardware implementation on a FPGA, a Verilog file is automatically generated from from C code having the drawing primitive algorithm</p>
+<p>See a portion of the generated Verilog code, where translated C expressions can be readily appreciated:</p>
+<pre><code>4: begin
+    if (_q_x&lt;_q_rw) begin
+        _t_xx = _q_x*_q_x;
+        _t_xh = (_t_xx)*(_q_hh);
+        if (_t_xh+_q_yw&lt;_q_wh) begin
+            _d_bus_dat_w = in_rgba;
+            _d_bus_we = 1;
+            _d_bus_stb = 1;
+            _d_bus_cyc = 1;
+            if (!((_d_bus_stb&amp;&amp;_d_bus_we)&amp;&amp;!(_d_bus_stb&amp;&amp;in_bus_ack&amp;&amp;_d_bus_we))) begin
+                _d_bus_stb = 0;
+                _d_bus_adr = (_q_bus_adr+(in_xstride));
+                _d_x = _q_x+1;
+            end
+        end else begin
+            _d_bus_adr = (_q_bus_adr+(in_xstride));
+            _d_x = _q_x+1;
+        end
+        _d__idx_fsm0 = 4;
+    end else begin
+        _d__idx_fsm0 = 5;
+    end
+end</code></pre>
+<p>After generating a System On Chip (SoC) for the target FPGA the accelerator can be called as follows:</p>
+<pre><code>regs-&gt;x0 = x0;
+regs-&gt;x1 = x1;
+regs-&gt;y0 = y0;
+regs-&gt;y1 = y1;
+regs-&gt;base = VIDEO_FRAMEBUFFER_BASE + y0*FRAME_PITCH + x0*sizeof(rgba);
+regs-&gt;xstride = SDRAM_BUS_BITS/8;
+regs-&gt;ystride = FRAME_PITCH;
+regs-&gt;rgba = rgba;
 
-<br>
-<br>
- 
-A triangle rasterizer was implemented with high quality antialiasing, based on analytical prefiltering technique. Each pixel is evaluated just once<br>
-<img src="antialiased%20triangles.png">
+regs-&gt;run = 1; //start
+while(!regs-&gt;done); //wait until done</code></pre>
+<p>As seen, you first set memory mapped registers with the desired values, then you start the core, then wait until the <code>done</code> flag is set.</p>
+<p>The resulting execution in hardware is as follows:</p>
+<p><img src=hardware1000.jpeg width=640 height=480></img></p>
+<h2 id="testing-equivalence-of-software-and-hardware">Testing equivalence of software and hardware</h2>
+<p>You can visually appreciate that both images seems like the same, but how we can be sure the generated Verilog behaves the same as the software implementation? The solution is to use the acellerated implementations and also call the compiled software implementation in the same SoC, then we can compare if results are the same.</p>
+<figure>
+<img src="passed_tests.png" alt="" /><figcaption>passed test</figcaption>
+</figure>
+<p>In case of any discrepance, non-matching pixels are marked in red (this was generated by inducing a coordinate error in the software implementation) and the amount of pixels in error is reported.</p>
+<figure>
+<img src="failed_tests.png" alt="" /><figcaption>failded test</figcaption>
+</figure>
+<p>Console output would be in this case:</p>
+<pre><code>Pixel errors: 320 (screen should have no red pixels)
+
+==========================================
+*** TESTS FAILED ***
+==========================================</code></pre>
+<h2 id="prototype-application-and-simulator">Prototype application and simulator</h2>
+<p>A <em>clock demo</em> application is shown, using a combination of drawn rectangles and ellipses.</p>
+<p><img src=clock.png width=640 height=480></img></p>
+<p>The code for that demo application can be compiled with the main simulator code on the host machine (e.g. Linux) to see results on the simulator window. This eases testing while in development since the program compiles in few seconds, then it can be run on the hardware platform to check if producing the same results. In the provided video, you can see that the hardware matches the simulator.</p>
 </body>
 </html>
-
